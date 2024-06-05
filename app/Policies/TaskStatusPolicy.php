@@ -2,9 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Models\TaskStatus;
+use App\Models\TaskStatus;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class TaskStatusPolicy
 {

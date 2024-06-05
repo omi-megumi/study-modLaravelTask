@@ -1,11 +1,11 @@
 <?php
 
-namespace Database\Factories\Models;
+namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Models\TaskStatus>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TaskStatus>
  */
 class TaskStatusFactory extends Factory
 {
@@ -17,7 +17,7 @@ class TaskStatusFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->text(5)
         ];
     }
 }

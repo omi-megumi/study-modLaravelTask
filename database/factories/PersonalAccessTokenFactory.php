@@ -1,13 +1,13 @@
 <?php
 
-namespace Database\Factories\Models;
+namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Models\TaskScope>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PersonalAccessToken>
  */
-class TaskScopeFactory extends Factory
+class PersonalAccessTokenFactory extends Factory
 {
     /**
      * Define the model's default state.

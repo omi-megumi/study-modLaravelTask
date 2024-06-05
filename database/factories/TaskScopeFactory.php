@@ -1,13 +1,13 @@
 <?php
 
-namespace Database\Factories\Models;
+namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Models\Task>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TaskScope>
  */
-class TaskFactory extends Factory
+class TaskScopeFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->text(5)
         ];
     }
 }
