@@ -5,7 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskStatusRequest;
 use App\Http\Requests\UpdateTaskStatusRequest;
-use App\Models\Models\TaskStatus;
+use App\Models\TaskStatus;
 
 class TaskStatusController extends Controller
 {

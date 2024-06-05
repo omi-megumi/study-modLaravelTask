@@ -5,7 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePersonalAccessTokenRequest;
 use App\Http\Requests\UpdatePersonalAccessTokenRequest;
-use App\Models\Models\PersonalAccessToken;
+use App\Models\PersonalAccessToken;
 
 class PersonalAccessTokenController extends Controller
 {

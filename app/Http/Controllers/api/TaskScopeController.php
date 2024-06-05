@@ -5,7 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskScopeRequest;
 use App\Http\Requests\UpdateTaskScopeRequest;
-use App\Models\Models\TaskScope;
+use App\Models\TaskScope;
 
 class TaskScopeController extends Controller
 {

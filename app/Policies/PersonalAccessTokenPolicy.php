@@ -2,9 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Models\PersonalAccessToken;
+use App\Models\PersonalAccessToken;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class PersonalAccessTokenPolicy
 {
