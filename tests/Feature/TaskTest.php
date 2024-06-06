@@ -37,7 +37,10 @@ class TaskTest extends TestCase
 
     public function test_index()
     {
+
         $task = Task::factory()->create();
+        $taskScope = TaskScope::factory()->create();
+        $taskStatus = TaskStatus::factory()->create();
 
         $response = $this->getJson(
             Str::of("/api/tasks")
