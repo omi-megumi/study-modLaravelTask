@@ -21,7 +21,8 @@ class TaskFactory extends Factory
             'task_status_id' => $this->faker->numberBetween(1, 3),
             'task_scope_id' => $this->faker->numberBetween(1, 3),
             'assigned_user_id' => $this->faker->numberBetween(1, 3),
-            'user_id' => $this->faker->numberBetween(1, 3)
+            'user_id' => $this->faker->numberBetween(1, 3),
+            //'deleted_at' => null
 
         ];
     }

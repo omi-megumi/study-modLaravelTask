@@ -6,17 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Task::all();
+        $tasks = Task::with(['taskScope', 'taskStatus', 'user', 'assignedUser'])->get();
+        return response()->json(['data' => $tasks]);
     }
-
     /**
      * Show the form for creating a new resource.
      */
