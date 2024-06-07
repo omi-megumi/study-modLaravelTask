@@ -15,7 +15,7 @@ use App\Models\Task;
 
 class TaskTest extends TestCase
 {
-    //use DatabaseTransactions;
+    use DatabaseTransactions;
     use WithFaker;
 
     protected function setUp(): void
@@ -26,14 +26,6 @@ class TaskTest extends TestCase
         $user = User::factory()->create();
         $this->be($user);
     }
-
-    /*
-     * タスク表示のテスト
-     * 0：サンプルデータを作成する
-     * 1：/tasksにアクセスする
-     * 2：ページが表示される
-     * 3：0で作成したタスク一覧が表示される
-     */
 
     public function test_index()
     {
@@ -47,7 +39,7 @@ class TaskTest extends TestCase
         )
 
          ->tap(function (TestResponse $response) {
-          echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+          //echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
          });
 
         $response->assertJson(fn(AssertableJson $json) => $json
@@ -98,5 +90,34 @@ class TaskTest extends TestCase
      * 5：自動的に/tasksにアクセスする
      * 6：3で入力したタスクが表示される
     */
+    public function test_store()
+    {
 
+        $task = Task::factory()->make();
+
+        $this->postJson("/api/tasks", [
+            'task' => $task->task,
+            'status_id' => $task->task_status_id,
+            'scope_id' => $task->task_scope_id,
+            'assigned_user_id' => $task->assigned_user_id,
+            'user_id' => $task->user_id
+        ])
+
+            ->tap(function (TestResponse $response) {
+                 echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+            })
+            ->assertSuccessful()
+            ->assertJson(fn(AssertableJson $json) => $json
+                ->has('data', fn(AssertableJson $json) => $json
+                    ->where('task', $task->task)
+                    ->where('task_status_id', $task->task_status_id)
+                    ->where('task_scope_id', $task->task_scope_id)
+                    ->where('assigned_user_id', $task->assigned_user_id)
+                    ->where('user_id', $task->user_id)
+                )
+                ->where('message.title', 'タスクを追加しました。')
+                ->where('message.body', null)
+                ->has('errors')
+            );
+    }
 }
