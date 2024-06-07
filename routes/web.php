@@ -7,3 +7,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('api/tasks', [TaskController::class, 'index']);
+Route::post('api/tasks', [TaskController::class, 'store']);
+//Route::apiResource('task', TaskController::class);
