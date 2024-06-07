@@ -5,7 +5,9 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Http\Resources\TaskCollection;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -16,7 +18,15 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $tasks = Task::with(['taskScope', 'taskStatus', 'user', 'assignedUser'])->get();
-        return response()->json(['data' => $tasks]);
+
+        $tasks = $tasks->map(function ($task) {
+            $assignedUser = User::find($task->assigned_user_id);
+            $task->assigned_user = $assignedUser;
+            return $task;
+        });
+
+        //return response()->json(['data' => $tasks]);
+        return new TaskCollection($tasks);
     }
     /**
      * Show the form for creating a new resource.
