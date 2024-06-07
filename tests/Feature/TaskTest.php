@@ -39,8 +39,6 @@ class TaskTest extends TestCase
     {
 
         $task = Task::factory()->create();
-        $taskScope = TaskScope::factory()->create();
-        $taskStatus = TaskStatus::factory()->create();
 
         $response = $this->getJson(
             Str::of("/api/tasks")
@@ -59,6 +57,7 @@ class TaskTest extends TestCase
                     'task' => 'string',
                     'task_status_id' => 'integer',
                     'task_scope_id' => 'integer',
+                    'assigned_user_id' => 'integer',
                     'user_id' => 'integer',
                     'created_at' => 'string',
                     'updated_at' => 'string',
@@ -77,7 +76,15 @@ class TaskTest extends TestCase
                     'user.email_verified_at' => 'string',
                     'user.created_at' => 'string',
                     'user.updated_at' => 'string',
-                    'user.deleted_at' => 'null'
+                    'user.deleted_at' => 'null',
+                    'assigned_user' => 'array',
+                    'assigned_user.id' => 'integer',
+                    'assigned_user.name' => 'string',
+                    'assigned_user.email' => 'string',
+                    'assigned_user.email_verified_at' => 'string',
+                    'assigned_user.created_at' => 'string',
+                    'assigned_user.updated_at' => 'string',
+                    'assigned_user.deleted_at' => 'null'
                 ])
             )
         );

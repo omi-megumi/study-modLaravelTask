@@ -18,12 +18,10 @@ class TaskFactory extends Factory
     {
         return [
             'task' => $this->faker->sentence,
-            'task_status_id' => $this->faker->numberBetween(1, 3),
-            'task_scope_id' => $this->faker->numberBetween(1, 3),
-            'assigned_user_id' => $this->faker->numberBetween(1, 3),
-            'user_id' => $this->faker->numberBetween(1, 3),
-            //'deleted_at' => null
-
+            'task_status_id' => fake()->numberBetween(1, 3),
+            'task_scope_id' => fake()->numberBetween(1, 3),
+            'assigned_user_id' => fake()->numberBetween(1, 3),
+            'user_id' => fake()->numberBetween(1, 3),
         ];
     }
 }
