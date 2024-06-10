@@ -41,7 +41,7 @@ class TaskTest extends TestCase
         )
 
          ->tap(function (TestResponse $response) {
-          //echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+          echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
          });
 
         $response->assertJson(fn(AssertableJson $json) => $json
@@ -84,14 +84,6 @@ class TaskTest extends TestCase
         );
     }
 
-    /* タスク登録のテスト
-     * 1：/newにアクセスする
-     * 2：ページが表示される
-     * 3：サンプルデータを入力する
-     * 4：保存する
-     * 5：自動的に/tasksにアクセスする
-     * 6：3で入力したタスクが表示される
-    */
     public function test_store()
     {
         $task = Task::factory()->make();
@@ -104,7 +96,7 @@ class TaskTest extends TestCase
             'user_id' => $task->user_id
         ])
             ->tap(function (TestResponse $response) {
-                echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+                //echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
             })
             ->assertSuccessful()
             ->assertJson(fn(AssertableJson $json) => $json
@@ -113,4 +105,20 @@ class TaskTest extends TestCase
                 ->where('message.body', null)
             );
     }
+
+//    public function test_show()
+//    {
+//        $task = Task::factory()->create();
+//
+//        $response = $this->getJson("/api/tasks/{$task->id}")
+//            ->tap(function (TestResponse $response) {
+//                 echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+//            })
+//            ->assertSuccessful()
+//            ->assertJson(fn(AssertableJson $json) => $json
+//                ->has('data')
+//                ->has('message')
+//                ->has('errors')
+//            );
+//    }
 }
