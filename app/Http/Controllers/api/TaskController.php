@@ -50,11 +50,23 @@ class TaskController extends Controller
                 'task_scope_id' => request()->input('task_scope_id'),
                 'assigned_user_id' => request()->input('assigned_user_id'),
                 'user_id' => request()->input('user_id')
+//                'assigned_user_id' => Auth::user()->id,
+//                'user_id'          => Auth::user()->id,
             ]);
             if ($task->save()) {
                 return $task;
             }
+
+            throw new \Exception('タスクの保存に失敗しました');
         });
+
+        return response()->json([
+            'data' => new TaskResource($storedTask),
+            'message' => [
+                'title' => 'タスクを追加しました。',
+                'body' => null,
+            ],
+        ]);
         return (new TaskResource($storedTask))->setMessage('タスクを追加しました。');
     }
 

@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            TaskScopeSeeder::class,
             TaskStatusSeeder::class,
+            TaskScopeSeeder::class,
         ]);
     }
 }
