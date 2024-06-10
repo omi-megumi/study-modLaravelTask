@@ -19,15 +19,25 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $tasks = Task::with(['taskScope', 'taskStatus', 'user', 'assignedUser'])->get();
+        $query = Task::with([
+           'taskScope',
+           'taskStatus',
+            'user',
+            'assignedUser'
+        ]);
 
-        $tasks = $tasks->map(function ($task) {
-            $assignedUser = User::find($task->assigned_user_id);
-            $task->assigned_user = $assignedUser;
-            return $task;
-        });
+        // タスク名、ステータスid、スコープidで絞り込み検索
+        if ($request->input('task')) {
+            $query->where('task', $request->input('task'));
+        }
+        if ($request->input('status_id')) {
+            $query->where('task_status_id', $request->input('status_id'));
+        }
+        if ($request->input('scope_id')) {
+            $query->where('task_scope_id', $request->input('scope_id'));
+        }
+        $tasks = $query->get();
 
-        //return response()->json(['data' => $tasks]);
         return new TaskCollection($tasks);
     }
     /**
