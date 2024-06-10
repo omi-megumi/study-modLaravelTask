@@ -9,6 +9,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Task extends Model
 {
     use HasFactory, SoftDeletes;
+
+
+    protected $fillable = [
+        'task',
+        'task_status_id',
+        'task_scope_id',
+        'assigned_user_id',
+        'user_id',
+    ];
     public function taskScope()
     {
         return $this->belongsTo(TaskScope::class);

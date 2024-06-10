@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Str;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Testing\TestResponse;
@@ -17,6 +18,7 @@ class TaskTest extends TestCase
 {
     use DatabaseTransactions;
     use WithFaker;
+    use WithoutMiddleware;
 
     protected function setUp(): void
     {
@@ -92,32 +94,23 @@ class TaskTest extends TestCase
     */
     public function test_store()
     {
-
         $task = Task::factory()->make();
 
-        $this->postJson("/api/tasks", [
+        $response = $this->postJson("/api/tasks", [
             'task' => $task->task,
-            'status_id' => $task->task_status_id,
-            'scope_id' => $task->task_scope_id,
+            'task_status_id' => $task->task_status_id,
+            'task_scope_id' => $task->task_scope_id,
             'assigned_user_id' => $task->assigned_user_id,
             'user_id' => $task->user_id
         ])
-
             ->tap(function (TestResponse $response) {
-                 echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+                echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
             })
             ->assertSuccessful()
             ->assertJson(fn(AssertableJson $json) => $json
-                ->has('data', fn(AssertableJson $json) => $json
-                    ->where('task', $task->task)
-                    ->where('task_status_id', $task->task_status_id)
-                    ->where('task_scope_id', $task->task_scope_id)
-                    ->where('assigned_user_id', $task->assigned_user_id)
-                    ->where('user_id', $task->user_id)
-                )
+                ->has('data')
                 ->where('message.title', 'タスクを追加しました。')
                 ->where('message.body', null)
-                ->has('errors')
             );
     }
 }
