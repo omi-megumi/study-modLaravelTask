@@ -85,6 +85,8 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
+        info(__METHOD__ . '()#L' . __LINE__);
+        echo __METHOD__ . '()#L' . __LINE__ . ':' . json_encode($task, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
         return new TaskResource($task);
     }
 

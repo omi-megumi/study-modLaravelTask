@@ -16,7 +16,7 @@ use App\Models\Task;
 
 class TaskTest extends TestCase
 {
-    use DatabaseTransactions;
+    //use DatabaseTransactions;
     use WithFaker;
     use WithoutMiddleware;
 
@@ -74,16 +74,16 @@ class TaskTest extends TestCase
     public function test_show()
     {
         $task = Task::factory()->create();
-        $this->getJson("/api/tasks/{$task->id}")
+        $this->getJson("api/tasks/{$task->id}")
             ->tap(function (TestResponse $response) {
                  echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
             })
             ->assertSuccessful()
             ->assertJson(fn(AssertableJson $json) => $json
-                ->has('data', null, fn(AssertableJson $json) => $json
+                ->has('data', self::typeClosure())
                 ->has('message')
                 ->has('errors')
-            ));
+            );
     }
 
     //型チェック
