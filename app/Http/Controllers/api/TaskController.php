@@ -77,7 +77,7 @@ class TaskController extends Controller
                 'body' => null,
             ],
         ]);
-        return (new TaskResource($storedTask))->setMessage('タスクを追加しました。');
+        return (new TaskResource($storedTask));
     }
 
     /**
@@ -85,7 +85,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        return new TaskResource($task);
     }
 
     /**
