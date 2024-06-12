@@ -26,10 +26,8 @@ class TaskTest extends TestCase
         parent::setUp();
 
         // ユーザーを作成し、ログインする
-        //$user = User::factory()->create();
         $this->logInUser = User::factory()->create();
         $this->actingAs($this->logInUser);
-        //$this->be($user);
     }
 
     public function test_index()
@@ -110,6 +108,19 @@ class TaskTest extends TestCase
                 ->where('message.title', 'タスクを更新しました。')
                 ->where('message.body', null)
                 ->has('errors')
+            );
+    }
+
+    public function test_destroy()
+    {
+        $loggedInUserId = $this->logInUser->id;
+        $task = Task::factory()->create(['user_id' => $loggedInUserId]);
+
+        $this->deleteJson("/api/tasks/{$task->id}")
+            ->assertSuccessful()
+            ->assertJson(fn(AssertableJson $json) => $json
+                ->where('message.title', 'タスクを削除しました。')
+                ->where('message.body', null)
             );
     }
 
