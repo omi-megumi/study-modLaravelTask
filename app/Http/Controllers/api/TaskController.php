@@ -103,7 +103,26 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        //
+        //echo $task;
+        $updatedTask = DB::transaction(function () use ($task) {
+            $task->fill([
+                'task'           => request()->input('task'),
+                'task_status_id' => request()->input('status_id'),
+                'task_scope_id'  => request()->input('scope_id'),
+            ]);
+            if ($task->save()) {
+                return $task;
+            }
+        });
+
+        return response()->json([
+            'data' => new TaskResource($updatedTask),
+            'message' => [
+                'title' => 'タスクを追加しました。',
+                'body' => null,
+            ],
+        ]);
+        return (new TaskResource($updatedTask));
     }
 
     /**

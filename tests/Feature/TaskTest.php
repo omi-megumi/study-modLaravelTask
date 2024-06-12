@@ -20,13 +20,16 @@ class TaskTest extends TestCase
     use WithFaker;
     use WithoutMiddleware;
 
+    protected $loggedInUser;
     protected function setUp(): void
     {
         parent::setUp();
 
         // ユーザーを作成し、ログインする
-        $user = User::factory()->create();
-        $this->be($user);
+        //$user = User::factory()->create();
+        $this->logInUser = User::factory()->create();
+        $this->actingAs($this->logInUser);
+        //$this->be($user);
     }
 
     public function test_index()
@@ -82,6 +85,30 @@ class TaskTest extends TestCase
             ->assertJson(fn(AssertableJson $json) => $json
                 ->has('data', self::typeClosure())
                 ->has('message')
+                ->has('errors')
+            );
+    }
+
+    public function test_update()
+    {
+        $loggedInUserId = $this->logInUser->id;
+        $task = Task::factory()->create(['user_id' => $loggedInUserId]);
+
+        $this->putJson("/api/tasks/{$task->id}", [
+            'task'             => $task->task,
+            'status_id'        => $task->task_status_id,
+            'scope_id'         => $task->task_scope_id,
+            'assigned_user_id' => $task->assigned_user_id,
+            'user_id'          => $task->user_id,
+        ])
+            ->tap(function (TestResponse $response) {
+                 //echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+            })
+            ->assertSuccessful()
+            ->assertJson(fn(AssertableJson $json) => $json
+                ->has('data', self::typeClosure())
+                ->where('message.title', 'タスクを更新しました。')
+                ->where('message.body', null)
                 ->has('errors')
             );
     }
