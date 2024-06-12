@@ -130,6 +130,16 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        //echo $task;
+        try {
+            if ($task->delete()) {
+                return response()->json([
+                    'result'  => true,
+                    'message' => ['title' => 'タスクを削除しました。', 'body' => null],
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            // do nothing
+        }
     }
 }
