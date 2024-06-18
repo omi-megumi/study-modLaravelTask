@@ -11,4 +11,3 @@ Route::get('/', function () {
 //Route::get('api/tasks/{task}', [TaskController::class, 'show']);
 //Route::put('api/tasks/{id}', [TaskController::class, 'update']);
 //Route::delete('api/tasks/{id}', [TaskController::class, 'destroy']);
-Route::apiResource('api/tasks', TaskController::class);
