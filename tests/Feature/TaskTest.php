@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class TaskTest extends TestCase
 {
-    use DatabaseTransactions;
+    //use DatabaseTransactions;
     use WithFaker;
 
 //    use WithoutMiddleware;
@@ -32,7 +32,7 @@ class TaskTest extends TestCase
     public function test_index()
     {
 
-        $task = Task::factory()->create();
+        $task = Task::factory()->create(['user_id'=> $this->logInUser->id]);
 
         $response = $this->getJson(
             Str::of("/api/tasks")
@@ -40,7 +40,7 @@ class TaskTest extends TestCase
                 ->append("&scope_id={$task->task_scope_id}")
         )
             ->tap(function (TestResponse $response) {
-                //echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+                echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
             });
 
         $response->assertJson(fn(AssertableJson $json) => $json
@@ -50,7 +50,7 @@ class TaskTest extends TestCase
 
     public function test_store()
     {
-        $task = Task::factory()->make();
+        $task = Task::factory()->make(['user_id'=> $this->logInUser->id]);
 
         $response = $this->postJson("/api/tasks", [
             'task'             => $task->task,

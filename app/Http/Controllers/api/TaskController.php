@@ -38,6 +38,7 @@ class TaskController extends Controller
         }
         $tasks = $query->get();
 
+        echo $tasks;
         return new TaskCollection($tasks);
     }
     /**
@@ -77,7 +78,7 @@ class TaskController extends Controller
                 'body' => null,
             ],
         ]);
-        return (new TaskResource($storedTask));
+        //return (new TaskResource($storedTask));
     }
 
     /**
