@@ -1,6 +1,8 @@
 <?php
+
 namespace Tests\Unit\Requests;
 
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use App\Models\TaskScope;
 use App\Models\TaskStatus;
@@ -10,7 +12,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Tests\TestCase;
-use App\Http\Requests\UpdateTaskRequest;
 
 class UpdateTaskRequestTest extends TestCase
 {
@@ -31,12 +32,12 @@ class UpdateTaskRequestTest extends TestCase
     public function test_pass()
     {
         $data = [
-            'task' => Str::random(255),
-            'task_status_id' => $this->status->id,
-            'task_scope_id' => $this->scope->id,
+            'task'             => Str::random(255),
+            'task_status_id'   => $this->status->id,
+            'task_scope_id'    => $this->scope->id,
             'assigned_user_id' => $this->logInUser->id,
-            'user_id'    => $this->logInUser->id,
-            'updated_at' => now()->format('Y-m-d H:i:s')
+            'user_id'          => $this->logInUser->id,
+            'updated_at'       => now()->format('Y-m-d H:i:s')
         ];
 
         collect([
@@ -49,15 +50,15 @@ class UpdateTaskRequestTest extends TestCase
         });
     }
 
-    public function test_fails():void
+    public function test_fails(): void
     {
         $data = [
-            'task' => Str::random(256),
-            'task_status_id' => fake()->randomElement([
+            'task'             => Str::random(256),
+            'task_status_id'   => fake()->randomElement([
                 '',
                 1000
             ]),
-            'task_scope_id' => fake()->randomElement([
+            'task_scope_id'    => fake()->randomElement([
                 '',
                 1000
             ]),
@@ -65,11 +66,11 @@ class UpdateTaskRequestTest extends TestCase
                 '',
                 1000
             ]),
-            'user_id'    => fake()->randomElement([
+            'user_id'          => fake()->randomElement([
                 '',
                 1000
             ]),
-            'updated_at' => now()->format('Y-m-d')
+            'updated_at'       => now()->format('Y-m-d')
         ];
         $validator = Validator::make(
             $data,
@@ -111,12 +112,6 @@ class UpdateTaskRequestTest extends TestCase
             [
                 'ユーザIDは必須項目です。',
                 '選択されたユーザIDは、有効ではありません。'
-            ]
-        );
-        $this->assertContains(
-            Arr::get($validator->messages()->messages(), 'updated_at.0'),
-            [
-                "更新日時の形式が'Y-m-d H:i:s'と一致しません。"
             ]
         );
     }

@@ -8,7 +8,6 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskCollection;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -20,8 +19,8 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $query = Task::with([
-           'taskScope',
-           'taskStatus',
+            'taskScope',
+            'taskStatus',
             'user',
             'assignedUser'
         ]);
@@ -40,6 +39,7 @@ class TaskController extends Controller
 
         return new TaskCollection($tasks);
     }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -55,11 +55,11 @@ class TaskController extends Controller
     {
         $storedTask = DB::transaction(function () {
             $task = new Task([
-                'task' => request()->input('task'),
-                'task_status_id' => request()->input('task_status_id'),
-                'task_scope_id' => request()->input('task_scope_id'),
+                'task'             => request()->input('task'),
+                'task_status_id'   => request()->input('task_status_id'),
+                'task_scope_id'    => request()->input('task_scope_id'),
                 'assigned_user_id' => request()->input('assigned_user_id'),
-                'user_id' => request()->input('user_id')
+                'user_id'          => request()->input('user_id')
 //                'assigned_user_id' => Auth::user()->id,
 //                'user_id'          => Auth::user()->id,
             ]);
@@ -71,13 +71,12 @@ class TaskController extends Controller
         });
 
         return response()->json([
-            'data' => new TaskResource($storedTask),
+            'data'    => new TaskResource($storedTask),
             'message' => [
                 'title' => 'タスクを追加しました。',
-                'body' => null,
+                'body'  => null,
             ],
         ]);
-        return (new TaskResource($storedTask));
     }
 
     /**
@@ -103,12 +102,11 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        //echo $task;
         $updatedTask = DB::transaction(function () use ($task) {
             $task->fill([
-                'task'           => request()->input('task'),
-                'task_status_id' => request()->input('status_id'),
-                'task_scope_id'  => request()->input('scope_id'),
+                'task'      => request()->input('task'),
+                'status_id' => request()->input('status_id'),
+                'scope_id'  => request()->input('scope_id'),
             ]);
             if ($task->save()) {
                 return $task;
@@ -116,13 +114,12 @@ class TaskController extends Controller
         });
 
         return response()->json([
-            'data' => new TaskResource($updatedTask),
+            'data'    => new TaskResource($updatedTask),
             'message' => [
-                'title' => 'タスクを追加しました。',
-                'body' => null,
+                'title' => 'タスクを更新しました。',
+                'body'  => null,
             ],
         ]);
-        return (new TaskResource($updatedTask));
     }
 
     /**
@@ -135,7 +132,10 @@ class TaskController extends Controller
             if ($task->delete()) {
                 return response()->json([
                     'result'  => true,
-                    'message' => ['title' => 'タスクを削除しました。', 'body' => null],
+                    'message' => [
+                        'title' => 'タスクを削除しました。',
+                        'body'  => null
+                    ],
                 ], 200);
             }
         } catch (\Exception $e) {

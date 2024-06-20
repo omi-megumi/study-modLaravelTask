@@ -2,9 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\TaskScope;
-use App\Models\TaskStatus;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,11 +17,11 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'task' => $this->faker->sentence,
-            'task_status_id' => fake()->numberBetween(1, 3),
-            'task_scope_id' => fake()->numberBetween(1, 3),
+            'task'             => $this->faker->sentence,
+            'task_status_id'   => fake()->numberBetween(1, 3),
+            'task_scope_id'    => fake()->numberBetween(1, 3),
             'assigned_user_id' => fake()->numberBetween(1, 3),
-            'user_id' => fake()->numberBetween(1, 3),
+            'user_id'          => fake()->numberBetween(1, 3),
         ];
     }
 }

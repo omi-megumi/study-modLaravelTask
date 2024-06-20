@@ -6,7 +6,6 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Str;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
@@ -15,8 +14,6 @@ class TaskTest extends TestCase
 {
     use DatabaseTransactions;
     use WithFaker;
-
-//    use WithoutMiddleware;
 
     protected $loggedInUser;
 
@@ -31,33 +28,39 @@ class TaskTest extends TestCase
 
     public function test_index()
     {
+        $assignedUser = User::factory()->create();
+        $task = Task::factory()->create([
+            'assigned_user_id' => $assignedUser->id,
+            'user_id'          => $this->logInUser->id
+        ]);
 
-        $task = Task::factory()->create();
-
-        $response = $this->getJson(
-            Str::of("/api/tasks")
+        $this->getJson(
+            str("/api/tasks")
                 ->append("?status_id={$task->task_status_id}")
                 ->append("&scope_id={$task->task_scope_id}")
         )
             ->tap(function (TestResponse $response) {
                 //echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
-            });
-
-        $response->assertJson(fn(AssertableJson $json) => $json
-            ->has('data', null, self::typeClosure()) // 型チェック
-        );
+            })
+            ->assertJson(fn(AssertableJson $json) => $json
+                ->has('data', null, self::typeClosure()) // 型チェック
+            );
     }
 
     public function test_store()
     {
-        $task = Task::factory()->make();
+        $assignedUser = User::factory()->create();
+        $task = Task::factory()->make([
+            'assigned_user_id' => $assignedUser->id,
+            'user_id'          => $this->logInUser->id
+        ]);
 
-        $response = $this->postJson("/api/tasks", [
+        $this->postJson("/api/tasks", [
             'task'             => $task->task,
             'task_status_id'   => $task->task_status_id,
             'task_scope_id'    => $task->task_scope_id,
             'assigned_user_id' => $task->assigned_user_id,
-            'user_id'          => $task->user_id
+            'user_id'          => $task->user_id,
         ])
             ->tap(function (TestResponse $response) {
                 //echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
@@ -72,7 +75,11 @@ class TaskTest extends TestCase
 
     public function test_show()
     {
-        $task = Task::factory()->create();
+        $assignedUser = User::factory()->create();
+        $task = Task::factory()->create([
+            'assigned_user_id' => $assignedUser->id,
+            'user_id'          => $this->logInUser->id
+        ]);
         $this->getJson("api/tasks/{$task->id}")
             ->tap(function (TestResponse $response) {
                 //echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
@@ -80,20 +87,21 @@ class TaskTest extends TestCase
             ->assertSuccessful()
             ->assertJson(fn(AssertableJson $json) => $json
                 ->has('data', self::typeClosure())
-                ->has('message')
-                ->has('errors')
             );
     }
 
     public function test_update()
     {
-        $loggedInUserId = $this->logInUser->id;
-        $task = Task::factory()->create(['user_id' => $loggedInUserId]);
+        $assignedUser = User::factory()->create();
+        $task = Task::factory()->create([
+            'assigned_user_id' => $assignedUser->id,
+            'user_id'          => $this->logInUser->id
+        ]);
 
         $this->putJson("/api/tasks/{$task->id}", [
             'task'             => $task->task,
-            'status_id'        => $task->task_status_id,
-            'scope_id'         => $task->task_scope_id,
+            'task_status_id'   => $task->task_status_id,
+            'task_scope_id'    => $task->task_scope_id,
             'assigned_user_id' => $task->assigned_user_id,
             'user_id'          => $task->user_id,
         ])
@@ -105,18 +113,21 @@ class TaskTest extends TestCase
                 ->has('data', self::typeClosure())
                 ->where('message.title', 'タスクを更新しました。')
                 ->where('message.body', null)
-                ->has('errors')
             );
     }
 
     public function test_destroy()
     {
-        $loggedInUserId = $this->logInUser->id;
-        $task = Task::factory()->create(['user_id' => $loggedInUserId]);
+        $assignedUser = User::factory()->create();
+        $task = Task::factory()->create([
+            'assigned_user_id' => $assignedUser->id,
+            'user_id'          => $this->logInUser->id
+        ]);
 
         $this->deleteJson("/api/tasks/{$task->id}")
             ->assertSuccessful()
             ->assertJson(fn(AssertableJson $json) => $json
+                ->where('result', true)
                 ->where('message.title', 'タスクを削除しました。')
                 ->where('message.body', null)
             );

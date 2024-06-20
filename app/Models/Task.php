@@ -18,6 +18,7 @@ class Task extends Model
         'assigned_user_id',
         'user_id',
     ];
+
     public function taskScope()
     {
         return $this->belongsTo(TaskScope::class);
@@ -32,6 +33,7 @@ class Task extends Model
     {
         return $this->belongsTo(User::class);
     }
+
     public function assignedUser()
     {
         return $this->belongsTo(User::class, 'assigned_user_id');

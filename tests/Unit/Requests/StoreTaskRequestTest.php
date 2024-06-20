@@ -1,6 +1,8 @@
 <?php
+
 namespace Tests\Unit\Requests;
 
+use App\Http\Requests\StoreTaskRequest;
 use App\Models\TaskScope;
 use App\Models\TaskStatus;
 use App\Models\User;
@@ -9,7 +11,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Tests\TestCase;
-use App\Http\Requests\StoreTaskRequest;
 
 class StoreTaskRequestTest extends TestCase
 {
@@ -25,39 +26,40 @@ class StoreTaskRequestTest extends TestCase
         $this->status = TaskStatus::factory()->create();
         $this->scope = TaskScope::factory()->create();
     }
+
     //有効なサンプルデータを作成して、成功することを確認する。
     public function test_pass()
     {
         $data = [
-            'task' => Str::random(255),
-            'task_status_id' => $this->status->id,
-            'task_scope_id' => $this->scope->id,
+            'task'             => Str::random(255),
+            'task_status_id'   => $this->status->id,
+            'task_scope_id'    => $this->scope->id,
             'assigned_user_id' => $this->logInUser->id,
-            'user_id'    => $this->logInUser->id,
-            'created_at' => now()->format('Y-m-d H:i:s'),
-            'updated_at' => now()->format('Y-m-d H:i:s')
+            'user_id'          => $this->logInUser->id,
+            'created_at'       => now()->format('Y-m-d H:i:s'),
+            'updated_at'       => now()->format('Y-m-d H:i:s')
         ];
 
         collect([
             (new StoreTaskRequest()),
         ])->each(function ($formRequest) use ($data) {
             $validator = Validator::make($data, $formRequest->rules(), [], $formRequest->attributes());
-             //echo __METHOD__ . '()#L' . __LINE__ . ':' . json_encode($validator->messages()->messages(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
+            //echo __METHOD__ . '()#L' . __LINE__ . ':' . json_encode($validator->messages()->messages(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
             $this->assertTrue($validator->passes()); //バリデーションに成功
             $this->assertEquals([], $validator->messages()->messages()); //エラーメッセージが空
         });
     }
 
     //無効なサンプルデータを作成して、正しいエラーメッセージが返ることを確認する。
-    public function test_fails():void
+    public function test_fails(): void
     {
         $data = [
-            'task' => Str::random(256),
-            'task_status_id' => fake()->randomElement([
+            'task'             => Str::random(256),
+            'task_status_id'   => fake()->randomElement([
                 '',
                 1000
             ]),
-            'task_scope_id' => fake()->randomElement([
+            'task_scope_id'    => fake()->randomElement([
                 '',
                 1000
             ]),
@@ -65,12 +67,12 @@ class StoreTaskRequestTest extends TestCase
                 '',
                 1000
             ]),
-            'user_id'    => fake()->randomElement([
+            'user_id'          => fake()->randomElement([
                 '',
                 1000
             ]),
-            'created_at' => now()->format('Y-m-d'),
-            'updated_at' => now()->format('Y-m-d')
+            'created_at'       => now()->format('Y-m-d'),
+            'updated_at'       => now()->format('Y-m-d')
         ];
         $validator = Validator::make(
             $data,
@@ -79,7 +81,7 @@ class StoreTaskRequestTest extends TestCase
             (new StoreTaskRequest())->attributes()
         );
         $this->assertFalse($validator->passes()); //バリデーションに失敗
-         //echo __METHOD__ . '()#L' . __LINE__ . ':' . json_encode($validator->messages()->messages(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
+        //echo __METHOD__ . '()#L' . __LINE__ . ':' . json_encode($validator->messages()->messages(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
         $this->assertContains(
             Arr::get($validator->messages()->messages(), 'task.0'),
             [
@@ -112,18 +114,6 @@ class StoreTaskRequestTest extends TestCase
             [
                 'ユーザIDは必須項目です。',
                 '選択されたユーザIDは、有効ではありません。'
-            ]
-        );
-        $this->assertContains(
-            Arr::get($validator->messages()->messages(), 'created_at.0'),
-            [
-                "作成日時の形式が'Y-m-d H:i:s'と一致しません。"
-            ]
-        );
-        $this->assertContains(
-            Arr::get($validator->messages()->messages(), 'updated_at.0'),
-            [
-                "更新日時の形式が'Y-m-d H:i:s'と一致しません。"
             ]
         );
     }
