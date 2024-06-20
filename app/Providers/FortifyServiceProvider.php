@@ -20,7 +20,7 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        Fortify::ignoreRoutes();
+//        Fortify::ignoreRoutes();
     }
 
     /**
@@ -28,9 +28,9 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-//        Fortify::loginView(function () {
-//            return view('auth.login');
-//        });
+        Fortify::loginView(function () {
+            return view('auth.login');
+        });
 //
 //        Fortify::authenticateUsing(function (Request $request) {
 //            $user = User::where('email', $request->email)->first();
@@ -47,7 +47,7 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
         RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
+            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
 
             return Limit::perMinute(5)->by($throttleKey);
         });
