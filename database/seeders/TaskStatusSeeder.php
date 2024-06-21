@@ -13,6 +13,9 @@ class TaskStatusSeeder extends Seeder
      */
     public function run(): void
     {
-        TaskStatus::factory()->count(10)->create();
+        TaskStatus::factory()->create(['name' => '完了']);
+        TaskStatus::factory()->create(['name' => '下書き']);
+        TaskStatus::factory()->create(['name' => '進行中']);
+        TaskStatus::factory()->create(['name' => '保留']);
     }
 }

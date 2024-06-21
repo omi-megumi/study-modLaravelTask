@@ -63,7 +63,7 @@ class TaskTest extends TestCase
             'user_id'          => $task->user_id,
         ])
             ->tap(function (TestResponse $response) {
-                //echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+                echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
             })
             ->assertSuccessful()
             ->assertJson(fn(AssertableJson $json) => $json

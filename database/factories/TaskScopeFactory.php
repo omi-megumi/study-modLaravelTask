@@ -16,8 +16,6 @@ class TaskScopeFactory extends Factory
      */
     public function definition(): array
     {
-        return [
-            'name' => $this->faker->text(5)
-        ];
+        return [];
     }
 }

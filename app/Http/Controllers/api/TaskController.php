@@ -5,7 +5,6 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
-use App\Http\Resources\TaskCollection;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -18,6 +17,7 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
+        //query 29行目以降の検索条件はメソッドチェーンの記述に変更する　whenの方が良い
         $query = Task::with([
             'taskScope',
             'taskStatus',
@@ -37,15 +37,7 @@ class TaskController extends Controller
         }
         $tasks = $query->get();
 
-        return new TaskCollection($tasks);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return Taskresource::collection($tasks);
     }
 
     /**
@@ -63,20 +55,11 @@ class TaskController extends Controller
 //                'assigned_user_id' => Auth::user()->id,
 //                'user_id'          => Auth::user()->id,
             ]);
-            if ($task->save()) {
-                return $task;
-            }
-
-            throw new \Exception('タスクの保存に失敗しました');
+            $task->save();
+            return $task;
         });
 
-        return response()->json([
-            'data'    => new TaskResource($storedTask),
-            'message' => [
-                'title' => 'タスクを追加しました。',
-                'body'  => null,
-            ],
-        ]);
+        return TaskResource::make($storedTask);
     }
 
     /**
@@ -86,16 +69,9 @@ class TaskController extends Controller
     {
         info(__METHOD__ . '()#L' . __LINE__);
         logger($task);
-        return new TaskResource($task);
+        return TaskResource::make($task);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Task $task)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -108,18 +84,11 @@ class TaskController extends Controller
                 'status_id' => request()->input('status_id'),
                 'scope_id'  => request()->input('scope_id'),
             ]);
-            if ($task->save()) {
-                return $task;
-            }
+            $task->save();
+            return $task;
         });
 
-        return response()->json([
-            'data'    => new TaskResource($updatedTask),
-            'message' => [
-                'title' => 'タスクを更新しました。',
-                'body'  => null,
-            ],
-        ]);
+        return TaskResource::make($updatedTask);
     }
 
     /**
@@ -127,19 +96,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //echo $task;
-        try {
-            if ($task->delete()) {
-                return response()->json([
-                    'result'  => true,
-                    'message' => [
-                        'title' => 'タスクを削除しました。',
-                        'body'  => null
-                    ],
-                ], 200);
-            }
-        } catch (\Exception $e) {
-            // do nothing
-        }
+        $task->delete();
+        return response()->noContent();
     }
 }

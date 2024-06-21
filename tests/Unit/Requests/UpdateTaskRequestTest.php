@@ -37,7 +37,6 @@ class UpdateTaskRequestTest extends TestCase
             'task_scope_id'    => $this->scope->id,
             'assigned_user_id' => $this->logInUser->id,
             'user_id'          => $this->logInUser->id,
-            'updated_at'       => now()->format('Y-m-d H:i:s')
         ];
 
         collect([
@@ -70,7 +69,6 @@ class UpdateTaskRequestTest extends TestCase
                 '',
                 1000
             ]),
-            'updated_at'       => now()->format('Y-m-d')
         ];
         $validator = Validator::make(
             $data,

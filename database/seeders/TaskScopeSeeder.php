@@ -13,6 +13,7 @@ class TaskScopeSeeder extends Seeder
      */
     public function run(): void
     {
-        TaskScope::factory()->count(10)->create();
+        TaskScope::factory()->create(['name' => '公開']);
+        TaskScope::factory()->create(['name' => '非公開']);
     }
 }
