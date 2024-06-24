@@ -34,12 +34,8 @@ class UpdateTaskRequest extends FormRequest
                 function ($attribute, $newStatus, $fail) {
                     info('$attribute ' . $attribute);
                     info('$newStatus ' . $newStatus);
-                    info($this->route('task'));
-                    info('taskAll'. Task::find($this->route('task')->id));
                     info('all ' . json_encode($this->all()));
-                    info('current task_status_id ' . $this->route('task')->task_status_id);
-                    info('current id ' . $this->route('task')->id);
-
+                    info('route' . $this->route('task_status_id'));
 
                     // 現在のタスクステータスIDを取得
                     $currentStatus = $this->route('task')->task_status_id;
