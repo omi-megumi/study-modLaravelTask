@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreTaskScopeRequest;
-use App\Http\Requests\UpdateTaskScopeRequest;
-use App\Models\TaskScope;
+use App\Http\Requests\StoreTaskStatusRequest;
+use App\Http\Requests\UpdateTaskStatusRequest;
+use App\Models\TaskStatus;
 
-class TaskScopeController extends Controller
+class TaskStatusController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,7 +28,7 @@ class TaskScopeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTaskScopeRequest $request)
+    public function store(StoreTaskStatusRequest $request)
     {
         //
     }
@@ -36,7 +36,7 @@ class TaskScopeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(TaskScope $taskScope)
+    public function show(TaskStatus $taskStatus)
     {
         //
     }
@@ -44,7 +44,7 @@ class TaskScopeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(TaskScope $taskScope)
+    public function edit(TaskStatus $taskStatus)
     {
         //
     }
@@ -52,7 +52,7 @@ class TaskScopeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTaskScopeRequest $request, TaskScope $taskScope)
+    public function update(UpdateTaskStatusRequest $request, TaskStatus $taskStatus)
     {
         //
     }
@@ -60,7 +60,7 @@ class TaskScopeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TaskScope $taskScope)
+    public function destroy(TaskStatus $taskStatus)
     {
         //
     }
