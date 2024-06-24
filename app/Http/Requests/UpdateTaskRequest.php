@@ -31,20 +31,18 @@ class UpdateTaskRequest extends FormRequest
             'task_status_id'   => [
                 'required',
                 'exists:task_statuses,id',
+                // status_id:1(完了) → 他のstatus_idに変更不可
+                // status_id:3(進行中) → status_id:2(下書き)に変更不可
                 function ($attribute, $newStatus, $fail) {
-                    info('$attribute ' . $attribute);
-                    info('$newStatus ' . $newStatus);
-                    info('all ' . json_encode($this->all()));
-                    info('route' . $this->route('task_status_id'));
-
-                    // 現在のタスクステータスIDを取得
-                    $currentStatus = $this->route('task')->task_status_id;
+                    $task = Task::find($this->route('task'));
+                    if (!$task) {
+                        return;
+                    }
+                    $currentStatus = Task::find($this->route('task'))->task_status_id;
 
                     if ($currentStatus === 1 && $newStatus !== 1) {
-                        // 完了(1)から他のステータスに変更不可
                         $fail('完了から他のステータスに変更することはできません。');
                     } elseif ($currentStatus === 3 && $newStatus === 2) {
-                        // 進行中(3)から下書き(2)に変更不可
                         $fail('進行中から下書きに変更することはできません。');
                     }
                 },
@@ -73,21 +71,5 @@ class UpdateTaskRequest extends FormRequest
             'assigned_user_id' => '担当者ID',
             'user_id'          => 'ユーザID',
         ];
-    }
-
-    /*
-     * 完了(1)から他のステータスに変更不可
-     * 進行中(3)から下書き(2)に変更不可
-     */
-    public function validateStatusChange($newStatus)
-    {
-        info(__METHOD__ . '()#L' . __LINE__);
-        $currentStatus = $this->route('task')->task_status_id;
-
-        if ($currentStatus === 1 && $newStatus !== 1){
-            return '完了から他のステータスに変更することはできません。';
-        } elseif ($currentStatus === 3 && $newStatus === 2){
-            return '進行中から下書きに変更することはできません。';
-        }
     }
 }

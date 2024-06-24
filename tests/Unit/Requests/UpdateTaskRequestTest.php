@@ -27,9 +27,6 @@ class UpdateTaskRequestTest extends TestCase
         $this->logInUser = User::factory()->create();
         $this->actingAs($this->logInUser);
 
-//        $this->status = TaskStatus::factory()->create();
-//        $this->scope = TaskScope::factory()->create();
-
         $this->status = TaskStatus::first();
         $this->scope = TaskScope::first();
         $this->task = Task::factory()->create(['user_id' => $this->logInUser->id]);
@@ -49,7 +46,7 @@ class UpdateTaskRequestTest extends TestCase
             (new UpdateTaskRequest()),
         ])->each(function ($formRequest) use ($data) {
             $validator = Validator::make($data, $formRequest->rules(), [], $formRequest->attributes());
-            //echo __METHOD__ . '()#L' . __LINE__ . ':' . json_encode($validator->messages()->messages(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
+            echo __METHOD__ . '()#L' . __LINE__ . ':' . json_encode($validator->messages()->messages(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
             $this->assertTrue($validator->passes()); //バリデーションに成功
             $this->assertEquals([], $validator->messages()->messages()); //エラーメッセージが空
         });
@@ -120,10 +117,9 @@ class UpdateTaskRequestTest extends TestCase
         );
     }
 
-    //完了(id:1)から他のステータスに変更不可
+    //status_id:1(完了) → 他のstatus_idに変更不可
     public function test_task_status_id_fail_closure_1()
     {
-        $this->scope = TaskScope::first();
         $task = Task::factory()->create([
             'task_status_id' => 1,
             'user_id'        => $this->logInUser->id
@@ -132,37 +128,19 @@ class UpdateTaskRequestTest extends TestCase
         //フォームリクエストにrouteResolver(リクエストに対応するrouteを返す)をセット
         $request = UpdateTaskRequest::create(
             uri: "api/tasks/{$task->id}",
-            method: "POST",
+            method: "PUT",
             parameters: [
                 'task'             => $task->task,
-                'task_status_id'   => 2,
+                'task_status_id'   => fake()->randomElement([2, 3]),
                 'task_scope_id'    => $task->task_scope_id,
                 'assigned_user_id' => $task->assigned_user_id,
-                'user_id'          => $task->user_id,]
+                'user_id'          => $task->user_id,
+            ]
         );
-        $request->setRouteResolver(fn() => (
-        new Route("post", "api/tasks/{$task->id}", [])
-        )
-            ->bind($request));
-
-
-        $request->setContainer($this->app)->setRedirector($this->app->make(Redirector::class));
+        $request->setRouteResolver(fn() => (new Route("put", "api/tasks/{task} ", []))
+            ->bind($request))
+            ->setContainer($this->app)->setRedirector($this->app->make(Redirector::class));
         $errors = [];
-
-        $data = [
-            'task'             => Str::random(255),
-            'task_status_id'   => fake()->randomElement([2, 3]),
-            'task_scope_id'    => $this->scope->id,
-            'assigned_user_id' => $this->logInUser->id,
-            'user_id'          => $this->logInUser->id,
-        ];
-
-        $validator = Validator::make(
-            $data,
-            (new UpdateTaskRequest())->rules(),
-            [],
-            (new UpdateTaskRequest())->attributes(),
-        );
 
         try {
             // バリデーション後の結果を取得
@@ -170,47 +148,44 @@ class UpdateTaskRequestTest extends TestCase
         } catch (ValidationException $e) {
             $errors = $e->errors();
         }
-        $this->assertEquals([], Arr::get($errors, "task_status_id.0"));
-
-//        $this->assertFalse($validator->passes()); //バリデーションに失敗する
-////        echo __METHOD__ . '()#L' . __LINE__ . ':' . json_encode($validator->messages()->messages(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
-//        $this->assertContains(
-//            Arr::get($validator->messages()->messages(), 'task_status_id.0'),
-//            [
-//                '完了から他のステータスに変更することはできません。'
-//            ]
-//        );
+        $this->assertContains(
+            '完了から他のステータスに変更することはできません。',
+            Arr::get($errors, "task_status_id")
+        );
     }
 
-//    // 進行中(id:3)から下書き(id:2)に変更不可のテスト
-//    public function test_task_status_id_fail_closure_2()
-//    {
-//        $this->scope = TaskScope::first();
-//        $this->task = Task::factory()->create([
-//            'task_status_id' => 3,
-//            'user_id' => $this->logInUser->id
-//        ]);
-//
-//        $data = [
-//            'task'             => Str::random(255),
-//            'task_status_id'   => 2,
-//            'task_scope_id'    => $this->scope->id,
-//            'assigned_user_id' => $this->logInUser->id,
-//            'user_id'          => $this->logInUser->id,
-//        ];
-//        $validator = Validator::make(
-//            $data,
-//            (new UpdateTaskRequest())->rules(),
-//            [],
-//            (new UpdateTaskRequest())->attributes(),
-//        );
-//        $this->assertFalse($validator->passes());
-//        echo __METHOD__ . '()#L' . __LINE__ . ':' . json_encode($validator->messages()->messages(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
-//        $this->assertContains(
-//            Arr::get($validator->messages()->messages(), 'task_status_id.0'),
-//            [
-//                '進行中から下書きに変更することはできません。'
-//            ]
-//        );
-//    }
+    // status_id:3(進行中) → status_id:2(下書き)に変更不可
+    public function test_task_status_id_fail_closure_2()
+    {
+        $task = Task::factory()->create([
+            'task_status_id' => 3,
+            'user_id'        => $this->logInUser->id
+        ]);
+        $request = UpdateTaskRequest::create(
+            uri: "api/tasks/{$task->id}",
+            method: "PUT",
+            parameters: [
+                'task'             => $task->task,
+                'task_status_id'   => 2,
+                'task_scope_id'    => $task->task_scope_id,
+                'assigned_user_id' => $task->assigned_user_id,
+                'user_id'          => $task->user_id,
+            ]
+        );
+        $request->setRouteResolver(fn() => (new Route("put", "api/tasks/{task} ", []))
+            ->bind($request))
+            ->setContainer($this->app)
+            ->setRedirector($this->app->make(Redirector::class));
+        $errors = [];
+
+        try {
+            $request->validateResolved();
+        } catch (ValidationException $e) {
+            $errors = $e->errors();
+        }
+        $this->assertContains(
+            '進行中から下書きに変更することはできません。',
+            Arr::get($errors, "task_status_id")
+        );
+    }
 }
