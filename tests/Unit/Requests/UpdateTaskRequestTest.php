@@ -46,7 +46,7 @@ class UpdateTaskRequestTest extends TestCase
             (new UpdateTaskRequest()),
         ])->each(function ($formRequest) use ($data) {
             $validator = Validator::make($data, $formRequest->rules(), [], $formRequest->attributes());
-            echo __METHOD__ . '()#L' . __LINE__ . ':' . json_encode($validator->messages()->messages(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
+//            echo __METHOD__ . '()#L' . __LINE__ . ':' . json_encode($validator->messages()->messages(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
             $this->assertTrue($validator->passes()); //バリデーションに成功
             $this->assertEquals([], $validator->messages()->messages()); //エラーメッセージが空
         });

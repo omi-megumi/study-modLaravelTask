@@ -34,12 +34,11 @@ class UpdateTaskRequest extends FormRequest
                 // status_id:1(完了) → 他のstatus_idに変更不可
                 // status_id:3(進行中) → status_id:2(下書き)に変更不可
                 function ($attribute, $newStatus, $fail) {
-                    $task = Task::find($this->route('task'));
+                    $task = Task::find($this->route('task'))->first();
                     if (!$task) {
                         return;
                     }
-                    $currentStatus = Task::find($this->route('task'))->task_status_id;
-
+                    $currentStatus = $task->task_status_id;
                     if ($currentStatus === 1 && $newStatus !== 1) {
                         $fail('完了から他のステータスに変更することはできません。');
                     } elseif ($currentStatus === 3 && $newStatus === 2) {

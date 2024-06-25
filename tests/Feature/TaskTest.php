@@ -63,13 +63,16 @@ class TaskTest extends TestCase
             'user_id'          => $task->user_id,
         ])
             ->tap(function (TestResponse $response) {
-                echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+                //echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
             })
             ->assertSuccessful()
             ->assertJson(fn(AssertableJson $json) => $json
                 ->has('data', self::typeClosure())
-                ->where('message.title', 'タスクを追加しました。')
-                ->where('message.body', null)
+                ->where('data.task', $task->task)
+                ->where('data.task_status_id', $task->task_status_id)
+                ->where('data.task_scope_id', $task->task_scope_id)
+                ->where('data.assigned_user_id', $task->assigned_user_id)
+                ->where('data.user_id', $task->user_id)
             );
     }
 
@@ -106,13 +109,16 @@ class TaskTest extends TestCase
             'user_id'          => $task->user_id,
         ])
             ->tap(function (TestResponse $response) {
-                //echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
+                echo json_encode($response->json(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
             })
             ->assertSuccessful()
             ->assertJson(fn(AssertableJson $json) => $json
                 ->has('data', self::typeClosure())
-                ->where('message.title', 'タスクを更新しました。')
-                ->where('message.body', null)
+                ->where('data.task', $task->task)
+                ->where('data.task_status_id', $task->task_status_id)
+                ->where('data.task_scope_id', $task->task_scope_id)
+                ->where('data.assigned_user_id', $task->assigned_user_id)
+                ->where('data.user_id', $task->user_id)
             );
     }
 
@@ -126,11 +132,7 @@ class TaskTest extends TestCase
 
         $this->deleteJson("/api/tasks/{$task->id}")
             ->assertSuccessful()
-            ->assertJson(fn(AssertableJson $json) => $json
-                ->where('result', true)
-                ->where('message.title', 'タスクを削除しました。')
-                ->where('message.body', null)
-            );
+            ->assertNoContent();
     }
 
     //型チェック
