@@ -17,26 +17,17 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        //query 29行目以降の検索条件はメソッドチェーンの記述に変更する　whenの方が良い
         $query = Task::with([
             'taskScope',
             'taskStatus',
             'user',
             'assignedUser'
-        ]);
+        ])
+            ->when($request->input('task'), fn($query, $task) => $query->where('task', $task))
+            ->when($request->input('status_id'), fn($query, $status_id) => $query->where('task_status_id', $status_id))
+            ->when($request->input('scope_id'), fn($query, $scope_id) => $query->where('task_scope_id', $scope_id));
 
-        // タスク名、ステータスid、スコープidで絞り込み検索
-        if ($request->input('task')) {
-            $query->where('task', $request->input('task'));
-        }
-        if ($request->input('status_id')) {
-            $query->where('task_status_id', $request->input('status_id'));
-        }
-        if ($request->input('scope_id')) {
-            $query->where('task_scope_id', $request->input('scope_id'));
-        }
         $tasks = $query->get();
-
         return Taskresource::collection($tasks);
     }
 
@@ -52,8 +43,6 @@ class TaskController extends Controller
                 'task_scope_id'    => request()->input('task_scope_id'),
                 'assigned_user_id' => request()->input('assigned_user_id'),
                 'user_id'          => request()->input('user_id')
-//                'assigned_user_id' => Auth::user()->id,
-//                'user_id'          => Auth::user()->id,
             ]);
             $task->save();
             return $task;
@@ -72,7 +61,6 @@ class TaskController extends Controller
         return TaskResource::make($task);
     }
 
-
     /**
      * Update the specified resource in storage.
      */
@@ -80,9 +68,9 @@ class TaskController extends Controller
     {
         $updatedTask = DB::transaction(function () use ($task) {
             $task->fill([
-                'task'      => request()->input('task'),
-                'status_id' => request()->input('status_id'),
-                'scope_id'  => request()->input('scope_id'),
+                'task'           => request()->input('task'),
+                'task_status_id' => request()->input('task_status_id'),
+                'scope_id'       => request()->input('scope_id'),
             ]);
             $task->save();
             return $task;
